@@ -49,14 +49,15 @@ router.post('/login', async (req, res) => {
 
     // 🔐 Envoie du token dans un cookie HTTPOnly
     res
-      .cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // en prod: true
-        sameSite: 'strict',
-        maxAge: 60 * 60 * 1000 // 1 heure
-      })
-      .status(200)
-      .json({ message: 'Connexion réussie', user: payload });
+  .cookie('token', token, {
+    httpOnly: true,
+    secure: true,           // ✅ obligatoire avec SameSite=None
+    sameSite: 'None',       // ✅ autorise l'envoi cross-site (Vercel -> Railway)
+    maxAge: 60 * 60 * 1000  // 1 heure
+  })
+  .status(200)
+  .json({ message: 'Connexion réussie', user: payload });
+      
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Échec de la connexion' });
